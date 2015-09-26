@@ -18,14 +18,13 @@ import com.badlogic.gdx.utils.TimeUtils;
 import java.util.Iterator;
 
 public class MyGdxGame extends ApplicationAdapter {
+    private static final String TAG = "MyGdxGame";
     private OrthographicCamera camera;
     private SpriteBatch batch;
-
     private Texture dropImage;
     private Texture bucketImage;
     private Sound dropSound;
     private Music rainMusic;
-
     private Rectangle bucket;
     private Vector3 touchPosition;
     private long lastDropTime;
@@ -48,11 +47,11 @@ public class MyGdxGame extends ApplicationAdapter {
         rainMusic.play();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 1920, 1080);
         batch = new SpriteBatch();
 
         bucket = new Rectangle();
-        bucket.x = 800 / 2 - 64 / 2;
+        bucket.x = 1920 / 2 - 64 / 2;
         bucket.y = 20;
         bucket.width = 64;
         bucket.height = 64;
@@ -75,12 +74,14 @@ public class MyGdxGame extends ApplicationAdapter {
         }
         batch.end();
 
-        
         if (Gdx.input.isTouched()) {
             touchPosition = new Vector3();
             touchPosition.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            Gdx.app.log(TAG, "Touch position: " + touchPosition);
             camera.unproject(touchPosition);
-            bucket.x = touchPosition.x - 64 / 2;
+            Gdx.app.log(TAG, "Touch position unprojected: " + touchPosition);
+            bucket.x = touchPosition.x;
+            Gdx.app.log(TAG, "Bucket x: " + bucket.x);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -93,8 +94,8 @@ public class MyGdxGame extends ApplicationAdapter {
         if (bucket.x < 0) {
             bucket.x = 0;
         }
-        if (bucket.x > 800 - 64) {
-            bucket.x = 800 - 64;
+        if (bucket.x > 1920 - 64) {
+            bucket.x = 1920 - 64;
         }
 
         if (TimeUtils.nanoTime() - lastDropTime > 1000000000) {
@@ -113,18 +114,6 @@ public class MyGdxGame extends ApplicationAdapter {
                 iter.remove();
             }
         }
-
-
-    }
-
-    private void spawnRaindrop() {
-        Rectangle raindrop = new Rectangle();
-        raindrop.x = MathUtils.random(0, 800 - 64);
-        raindrop.y = 480;
-        raindrop.width = 64;
-        raindrop.height = 64;
-        raindrops.add(raindrop);
-        lastDropTime = TimeUtils.nanoTime();
     }
 
     @Override
@@ -134,5 +123,15 @@ public class MyGdxGame extends ApplicationAdapter {
         dropSound.dispose();
         rainMusic.dispose();
         batch.dispose();
+    }
+
+    private void spawnRaindrop() {
+        Rectangle raindrop = new Rectangle();
+        raindrop.x = MathUtils.random(0, 1920 - 64);
+        raindrop.y = 1080;
+        raindrop.width = 64;
+        raindrop.height = 64;
+        raindrops.add(raindrop);
+        lastDropTime = TimeUtils.nanoTime();
     }
 }
